@@ -1,0 +1,25 @@
+in:
+  type: file
+  path_prefix: example/data.csv
+  parser:
+    type: csv
+    charset: UTF-8
+    newline: CRLF
+    null_string: 'NULL'
+    skip_header_lines: 1
+    comment_line_marker: '#'
+    columns:
+      - {name: time,  type: timestamp, format: "%Y-%m-%d"}
+      - {name: id, type: long}
+      - {name: name, type: string}
+      - {name: score, type: double}
+      - {name: json_payload, type: string}
+
+filters:
+  - type: flatten_json
+    json_column_name: json_payload
+    separator: "."
+    array_index_prefix: "_"
+
+out:
+  type: stdout
