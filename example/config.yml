@@ -1,8 +1,9 @@
 in:
   type: file
-  path_prefix: example/data.csv
+  path_prefix: example/data.tsv
   parser:
     type: csv
+    delimiter: "\t"
     charset: UTF-8
     newline: CRLF
     null_string: 'NULL'
@@ -23,3 +24,4 @@ filters:
 
 out:
   type: stdout
+
