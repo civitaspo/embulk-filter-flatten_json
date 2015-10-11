@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.ValueNode;
+import com.google.common.base.Optional;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Maps;
 import org.embulk.config.Config;
@@ -49,8 +50,8 @@ public class FlattenJsonFilterPlugin
         public String getSeparator();
 
         @Config("array_index_prefix")
-        @ConfigDefault("\"_\"")
-        public String getArrayIndexPrefix();
+        @ConfigDefault("null")
+        public Optional<String> getArrayIndexPrefix();
     }
 
     @Override
@@ -142,7 +143,7 @@ public class FlattenJsonFilterPlugin
                 }
             }
 
-            private void setFlattenJsonColumns(PageBuilder pageBuilder, List<Column> flattenJsonColumns, String separator, String arrayIndexPrefix)
+            private void setFlattenJsonColumns(PageBuilder pageBuilder, List<Column> flattenJsonColumns, String separator, Optional<String> arrayIndexPrefix)
                     throws IOException
             {
                 for (Column flattenJsonColumn: flattenJsonColumns) {
@@ -164,7 +165,7 @@ public class FlattenJsonFilterPlugin
                 }
             }
 
-            private void joinNode(String currentPath, JsonNode jsonNode, Map<String, String> map, String separator, String arrayIndexPrefix) {
+            private void joinNode(String currentPath, JsonNode jsonNode, Map<String, String> map, String separator, Optional<String> arrayIndexPrefix) {
                 if (jsonNode.isObject()) {
                     ObjectNode objectNode = (ObjectNode) jsonNode;
                     Iterator<Map.Entry<String, JsonNode>> iterator = objectNode.fields();
@@ -176,8 +177,15 @@ public class FlattenJsonFilterPlugin
                     }
                 } else if (jsonNode.isArray()) {
                     ArrayNode arrayNode = (ArrayNode) jsonNode;
-                    for (int i = 0; i < arrayNode.size(); i++) {
-                        joinNode(currentPath + separator + arrayIndexPrefix + i, arrayNode.get(i), map, separator, arrayIndexPrefix);
+                    if (arrayIndexPrefix.isPresent()) {
+                        for (int i = 0; i < arrayNode.size(); i++) {
+                            joinNode(currentPath + separator + arrayIndexPrefix.get() + i, arrayNode.get(i), map, separator, arrayIndexPrefix);
+                        }
+                    }
+                    else {
+                        for (int i = 0; i < arrayNode.size(); i++) {
+                            joinNode(currentPath + "[" + i + "]", arrayNode.get(i), map, separator, arrayIndexPrefix);
+                        }
                     }
                 } else if (jsonNode.isValueNode()) {
                     ValueNode valueNode = (ValueNode) jsonNode;
