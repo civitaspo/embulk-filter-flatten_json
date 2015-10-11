@@ -28,7 +28,7 @@ c1|c2|c3|json_payload
 
 ## Configuration
 
-- **json_column_name**: column name to flatten json (string, required)
+- **json_columns**: column name list to flatten json (string, required)
 - **separator**: separator to join keys (string, default: `"."`)
 - **array_index_prefix**: prefix of array index when joining keys (string, default: `"_"`)
 
@@ -37,7 +37,8 @@ c1|c2|c3|json_payload
 ```yaml
 filters:
   - type: flatten_json
-    json_column_name: json_payload
+    json_column:
+      - json_payload
     separator: "."
     array_index_prefix: "_"
 ```

@@ -18,7 +18,8 @@ in:
 
 filters:
   - type: flatten_json
-    json_column_name: json_payload
+    json_columns:
+      - json_payload
     separator: "."
     array_index_prefix: "_"
 
