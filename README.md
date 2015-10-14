@@ -38,7 +38,7 @@ c1|c2|c3|json_payload
 ```yaml
 filters:
   - type: flatten_json
-    json_column:
+    json_columns:
       - json_payload
     separator: "."
     array_index_prefix: "_"
