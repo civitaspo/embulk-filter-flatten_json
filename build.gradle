@@ -3,6 +3,7 @@ plugins {
     id "maven-publish"
     id "org.embulk.embulk-plugins" version "0.4.2"
     id 'com.diffplug.spotless' version '5.10.1'
+    id "com.palantir.git-version" version "0.12.3"
 }
 
 repositories {
@@ -11,7 +12,7 @@ repositories {
 }
 
 group = "pro.civitaspo"
-version = "0.1.0"
+version = gitVersion()
 description = "Embulk filter plugin to flatten json"
 
 sourceCompatibility = 1.8
@@ -21,6 +22,13 @@ dependencies {
     compileOnly  "org.embulk:embulk-core:0.9.23"
     testImplementation platform('org.junit:junit-bom:5.7.1')
     testImplementation 'org.junit.jupiter:junit-jupiter'
+}
+
+test {
+    useJUnitPlatform()
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
 }
 
 spotless {
