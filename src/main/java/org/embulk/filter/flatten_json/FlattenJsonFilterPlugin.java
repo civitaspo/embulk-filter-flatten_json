@@ -85,11 +85,12 @@ public class FlattenJsonFilterPlugin
         return new PageOutput()
         {
             private PageReader pageReader = new PageReader(inputSchema);
+            private PageBuilder pageBuilder = new PageBuilder(Exec.getBufferAllocator(), outputSchema, output);
 
             @Override
             public void add(Page page)
             {
-                try (PageBuilder pageBuilder = new PageBuilder(Exec.getBufferAllocator(), outputSchema, output)) {
+                try {
                     pageReader.setPage(page);
 
                     while (pageReader.nextRecord()) {
@@ -97,7 +98,6 @@ public class FlattenJsonFilterPlugin
                         setFlattenJsonColumns(pageBuilder, flattenJsonColumns, task.getSeparator(), task.getArrayIndexPrefix());
                         pageBuilder.addRecord();
                     }
-                    pageBuilder.finish();
                 }
                 catch (IOException e) {
                     logger.error(e.getMessage());
@@ -108,7 +108,7 @@ public class FlattenJsonFilterPlugin
             @Override
             public void finish()
             {
-                output.finish();
+                pageBuilder.finish();
             }
 
             @Override
