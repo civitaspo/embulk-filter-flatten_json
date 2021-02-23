@@ -1,6 +1,26 @@
 # Flatten Json filter plugin for Embulk
 
-## Example
+## Overview
+
+* **Plugin type**: filter
+
+## Configuration
+
+- **json_columns**: column name list to flatten json (string, required)
+- **separator**: separator to join keys (string, default: `"."`)
+- **array_index_prefix**: prefix of array index when joining keys (string, default: `null`)
+  - if set `null` and **separator** option use the default value, the output become like [JSONPath](http://goessner.net/articles/JsonPath/)
+
+## Usage
+
+```yaml
+filters:
+  - type: flatten_json
+    json_columns:
+      - json_payload
+    separator: "."
+    array_index_prefix: "_"
+```
 
 filter like below.
 
@@ -22,31 +42,15 @@ c1|c2|c3|json_payload
 3|natsume.soseki|9.9|{"id":9,"address.zip_code":"456-7891","address.city":"Edo","hobbies._0":"novel","hobbies._1":"reading books"}
 ```
 
-## Overview
-
-* **Plugin type**: filter
-
-## Configuration
-
-- **json_columns**: column name list to flatten json (string, required)
-- **separator**: separator to join keys (string, default: `"."`)
-- **array_index_prefix**: prefix of array index when joining keys (string, default: `null`)
-  - if set `null` and **separator** option use the default value, the output become like [JSONPath](http://goessner.net/articles/JsonPath/)
-
 ## Example
 
-```yaml
-filters:
-  - type: flatten_json
-    json_columns:
-      - json_payload
-    separator: "."
-    array_index_prefix: "_"
+```bash
+./gradlew gem
+embulk run example/config.yml -Ibuild/gemContents/lib
 ```
-
 
 ## Build
 
 ```
-$ ./gradlew gem  # -t to watch change of files and rebuild continuously
+$ ./gradlew gem
 ```
