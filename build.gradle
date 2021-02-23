@@ -23,6 +23,13 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter'
 }
 
+test {
+    useJUnitPlatform()
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
+}
+
 spotless {
     java {
         googleJavaFormat()
